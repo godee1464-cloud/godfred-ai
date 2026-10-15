@@ -21,7 +21,7 @@ if st.button("Ask Godfred AI"):
         try:
             client = Groq(api_key=GROQ_API_KEY)
             response = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model="openai/gpt-oss-20b",
                 messages=[{"role": "user", "content": question}]
             )
             st.success(response.choices[0].message.content)
