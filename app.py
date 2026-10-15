@@ -55,8 +55,6 @@ st.markdown("---")
 st.markdown("""
 <div style='text-align: center; background: white; padding: 20px; border-radius: 20px; border: 3px solid #FFD700;'>
     <p style='color: #CE1126!important; font-weight: 900!important; margin: 0; font-size: 18px;'>
-        ❤️ Made with LOVE in Ghana 🇬🇭 ❤️<br>
-        Fiapre - Sunyani
     </p>
     <p style='color: #000000!important; font-weight: bold; margin: 8px 0; font-size: 16px;'>
         © 2026 Godfred AI - Made with ❤️ in Ghana 🇬🇭<br>
