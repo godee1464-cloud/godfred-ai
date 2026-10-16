@@ -19,7 +19,7 @@ name = st.text_input("👤 Your Name:", value="Godfred")
 question = st.text_area("❓ Ask ANY WASSCE Question:", height=120, placeholder="What is photosynthesis? Explain like I'm preparing for WASSCE.")
 
 # PUT YOUR REAL GROQ KEY HERE
-GROQ_KEY = st.secrets.get("GROQ_KEY", "PASTE_YOUR_REAL_KEY_HERE")
+GROQ_KEY = st.secrets["GROQ_KEY"]
 
 if st.button("🚀 Ask Godfred AI"):
     if not question:
