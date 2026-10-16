@@ -27,7 +27,7 @@ if st.button("🚀 Ask AI", type="primary", use_container_width=True):
                 url = "https://api.groq.com/openai/v1/chat/completions"
                 headers = {"Authorization": f"Bearer {GROQ_KEY}", "Content-Type": "application/json"}
                 data = {
-                    "model": "llama-3.3-70b-versatile",
+                    "model": "openai/gpt-oss-20b",
                     "messages": [
                         {"role": "system", "content": "You are GH GODFRED AI, a brilliant WASSCE tutor for Ghanaian students. Format answers BEAUTIFULLY with: # Headings, **bold** for key terms, bullet lists, emojis, examples, and a summary. Explain simply for WASSCE."},
                         {"role": "user", "content": question}
