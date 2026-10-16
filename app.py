@@ -1,68 +1,52 @@
 import streamlit as st
-from groq import Groq
+import requests
 
-try:
-    GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
-except:
-    GROQ_API_KEY = ""
+st.set_page_config(page_title="GODFRED AI - WASSCE Helper", layout="centered")
 
-st.set_page_config(page_title="GODFRED AI GH", page_icon="🇬🇭")
-
+# --- CLEAN UI ---
 st.markdown("""
 <style>
-.stApp { background: linear-gradient(135deg, #FFFDF0 0%, #FFEB99 50%, #FFD700 100%); }
-.stMarkdown, p, label, div, span { color: #000000!important; }
-    h1 { color: #CE1126!important; text-align: center!important; font-weight: 900!important; }
-    h3 { color: #006B3F!important; text-align: center!important; }
-.stTextInput label,.stTextArea label { color: #000000!important; font-weight: bold!important; font-size: 18px!important; }
-.stTextInput input,.stTextArea textarea {
-        background-color: #FFFFFF!important; color: #000000!important;
-        border: 2.5px solid #006B3F!important; border-radius: 15px!important;
-    }
-.stButton > button {
-        background: linear-gradient(90deg, #CE1126 0%, #FFD700 50%, #006B3F 100%)!important;
-        color: white!important; font-weight: bold!important; font-size: 20px!important;
-        border-radius: 30px!important; border: 3px solid black!important; width: 100%!important;
-    }
-.stSuccess { background-color: white!important; color: black!important; border-radius: 20px!important; border-left: 6px solid #006B3F!important; }
+   .stTextArea textarea {border-radius: 12px!important; border: 2px solid #f59e0b!important;}
+   .stButton button {background-color: #f59e0b; color: black; font-weight: bold; border-radius: 20px; width: 100%;}
+   .answer-box {background: #fffbeb; padding: 20px; border-radius: 15px; border-left: 5px solid #f59e0b; color: #1f2937; line-height: 1.7;}
 </style>
+<h1 style='text-align:center; color:#92400e;'>GH GODFRED AI GH GH</h1>
+<p style='text-align:center;font-weight:bold;'>Built by Godfred - Your WASSCE Helper!</p>
+<p style='text-align:center;'>❤️ Made with LOVE from Ghana ❤️</p>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1>🇬🇭 GODFRED AI GH 🇬🇭</h1>", unsafe_allow_html=True)
-st.markdown("<h3>Built by Godfred - Your WASSCE Helper!</h3>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-weight: 700;'>❤️ Made with LOVE from Ghana ❤️</p>", unsafe_allow_html=True)
+name = st.text_input("👤 Your Name:", value="Godfred")
+question = st.text_area("❓ Ask ANY WASSCE Question:", height=120, placeholder="What is photosynthesis? Explain like I'm preparing for WASSCE.")
 
-name = st.text_input("👤 Your Name:", "Godfred")
-question = st.text_area("❓ Ask ANY WASSCE Question:", "What is photosynthesis? Explain like I'm preparing for WASSCE.", height=130)
+# PUT YOUR REAL GROQ KEY HERE
+GROQ_KEY = st.secrets.get("GROQ_KEY", "PASTE_YOUR_REAL_KEY_HERE")
 
 if st.button("🚀 Ask Godfred AI"):
-    try:
-        with st.spinner("🤔 Thinking..."):
-            client = Groq(api_key=GROQ_API_KEY)
-            response = client.chat.completions.create(
-                model="openai/gpt-oss-20b",
-                messages=[
-                    {"role": "system", "content": f"You are GODFRED AI GH, built with love from Fiapre-Sunyani, Ghana by Godfred. Help {name} for WASSCE."},
-                    {"role": "user", "content": question}
-                ]
-            )
-            st.success(response.choices[0].message.content)
-            st.balloons()
-    except Exception as e:
-        st.error(f"Error: {e}")
+    if not question:
+        st.warning("Please type a question!")
+    else:
+        with st.spinner("Godfred AI is thinking..."):
+            try:
+                headers = {"Authorization": f"Bearer {GROQ_KEY}", "Content-Type": "application/json"}
+                data = {
+                    "model": "llama-3.1-8b-instant",
+                    "messages": [
+                        {"role": "system", "content": f"You are GODFRED AI, built by Godfred in Ghana. You help WASSCE students. User is {name}. RULES: Always use clean paragraphs, leave empty line between points, use numbered lists 1. 2. 3. with line breaks. Make it easy to read for WASSCE."},
+                        {"role": "user", "content": question}
+                    ],
+                    "temperature": 0.7
+                }
+                res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=data, timeout=30)
+                result = res.json()
 
-st.markdown("---")
-st.markdown("""
-<div style='text-align: center; background: white; padding: 20px; border-radius: 20px; border: 3px solid #FFD700;'>
-    <p style='color: #CE1126!important; font-weight: 900!important; margin: 0; font-size: 18px;'>
-    </p>
-    <p style='color: #000000!important; font-weight: bold; margin: 8px 0; font-size: 16px;'>
-        © 2026 Godfred AI - Made with ❤️ in Ghana 🇬🇭<br>
-        Fiapre - Sunyani, Bono Region
-    </p>
-    <p style='color: #006B3F!important; font-weight: 800!important; margin: 5px 0; font-size: 17px;'>
-        Built by Godfred - For Ghanaian Students<br>
-        From Fiapre-Sunyani to the World! 🌍
-    </p>
-</div>
-""", unsafe_allow_html=True)
+                if "choices" in result:
+                    answer = result['choices'][0]['message']['content']
+                    st.divider()
+                    st.markdown(f"### ✅ Answer for {name}:")
+                    # THIS IS THE FIX - st.markdown renders the layout correctly
+                    st.markdown(answer)
+                else:
+                    st.error(f"API Error: {result}")
+
+            except Exception as e:
+                st.error(f"Error: {e}")
